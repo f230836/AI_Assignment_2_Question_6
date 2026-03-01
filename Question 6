@@ -1,5 +1,5 @@
-# Step 3: Priority Queue Implementation
-# - Cumulative code from previous steps plus a min-heap priority queue.
+# Step 4: Grid Class Implementation
+# - Cumulative code from previous steps plus the Grid class.
 
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -64,3 +64,58 @@ class PriorityQueue:
 
     def empty(self):
         return len(self._heap) == 0
+
+# Grid Class
+class Grid:
+    """
+    Manages the 2-D grid world.
+    Responsibilities:
+      - Cell state storage
+      - Wall placement / removal
+      - Start & Goal positioning
+      - Random map generation
+      - Dynamic obstacle spawning
+      - Neighbour queries for search
+    """
+
+    def __init__(self, rows=20, cols=20):
+        self.rows  = rows
+        self.cols  = cols
+        self.cells = [[EMPTY] * cols for _ in range(rows)]
+        self.start = (1, 1)
+        self.goal  = (rows - 2, cols - 2)
+        self._mark_endpoints()
+
+    def _mark_endpoints(self):
+        self.cells[self.start[0]][self.start[1]] = START
+        self.cells[self.goal[0]][self.goal[1]]   = GOAL
+
+    def reset(self, rows=None, cols=None):
+        if rows: self.rows = rows
+        if cols: self.cols = cols
+        self.cells = [[EMPTY] * self.cols for _ in range(self.rows)]
+        self.start = (min(self.start[0], self.rows - 2), min(self.start[1], self.cols - 2))
+        self.goal  = (min(self.goal[0],  self.rows - 2), min(self.goal[1],  self.cols - 2))
+        self._mark_endpoints()
+
+    def toggle_wall(self, r, c):
+        if (r, c) in (self.start, self.goal): return
+        if not (0 <= r < self.rows and 0 <= c < self.cols): return
+        self.cells[r][c] = EMPTY if self.cells[r][c] in (WALL, DYN_WALL) else WALL
+
+    def move_start(self, r, c):
+        if not (0 <= r < self.rows and 0 <= c < self.cols): return
+        if self.cells[r][c] in (WALL, DYN_WALL) or (r, c) == self.goal: return
+        self.cells[self.start[0]][self.start[1]] = EMPTY
+        self.start = (r, c)
+        self.cells[r][c] = START
+
+    def move_goal(self, r, c):
+        if not (0 <= r < self.rows and 0 <= c < self.cols): return
+        if self.cells[r][c] in (WALL, DYN_WALL) or (r, c) == self.start: return
+        self.cells[self.goal[0]][self.goal[1]] = EMPTY
+        self.goal = (r, c)
+        self.cells[r][c] = GOAL
+        self.cells[self.goal[0]][self.goal[1]] = EMPTY
+        self.goal = (r, c)
+        self.cells[r][c] = GOAL
