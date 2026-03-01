@@ -1,5 +1,5 @@
-# Step 5: Search Algorithms
-# - Cumulative code from previous steps and added A* and GBFS generators.
+# Step 6: Main Application
+# - Full cumulative code through search algorithms and added PathfindingApp GUI.
 
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -188,3 +188,33 @@ def search_step_generator(grid, algorithm, heuristic_fn, start_override=None):
 
     result.success = False
     yield {'type': 'done', 'result': result}
+
+# Main application class
+class PathfindingApp:
+    """Top-level GUI and control logic."""
+
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Dynamic Pathfinding Agent")
+        self.root.configure(bg="#1e1e2e")
+        self.root.resizable(True, True)
+
+        # Grid and state
+        self.grid       = Grid(GRID_ROWS, GRID_COLS)
+        self.cell_size  = CELL_SIZE
+        self.algorithm     = tk.StringVar(value="A*")
+        self.heuristic_var = tk.StringVar(value="Manhattan")
+        self.dynamic_var   = tk.BooleanVar(value=False)
+        self.density_var   = tk.StringVar(value="30")
+        self.rows_var      = tk.StringVar(value=str(GRID_ROWS))
+        self.cols_var      = tk.StringVar(value=str(GRID_COLS))
+        self.speed_var     = tk.IntVar(value=5)
+
+        # ...existing code...
+
+    def run(self):
+        self.root.mainloop()
+
+if __name__ == "__main__":
+    app = PathfindingApp()
+    app.run()
