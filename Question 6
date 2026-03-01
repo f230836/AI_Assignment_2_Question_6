@@ -1,5 +1,5 @@
-# Step 1: Initial Setup
-# - Added basic imports and constants for the grid environment.
+# Step 2: Added Heuristics
+# - Implemented Manhattan and Euclidean distance functions.
 
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -35,3 +35,12 @@ GRID_ROWS = 20
 GRID_COLS = 20
 ANIM_DELAY = 30  # ms between animation frames
 AGENT_DELAY = 120  # ms between agent steps in dynamic mode
+
+# Heuristics
+def manhattan(a, b):
+    """Manhattan Distance  –  |Δrow| + |Δcol|"""
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def euclidean(a, b):
+    """Euclidean Distance  –  √(Δrow² + Δcol²)"""
+    return math.sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2)
