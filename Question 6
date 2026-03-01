@@ -1,0 +1,37 @@
+# Step 1: Initial Setup
+# - Added basic imports and constants for the grid environment.
+
+import tkinter as tk
+from tkinter import ttk, messagebox
+import random
+import math
+import time
+import heapq
+from collections import defaultdict
+
+# Constants for cell types
+EMPTY = 0
+WALL = 1
+START = 2
+GOAL = 3
+VISITED = 4
+FRONTIER = 5
+PATH = 6
+DYN_WALL = 7
+
+COLORS = {
+    EMPTY: "#1e1e2e",
+    WALL: "#585b70",
+    START: "#a6e3a1",
+    GOAL: "#f38ba8",
+    VISITED: "#89b4fa",
+    FRONTIER: "#f9e2af",
+    PATH: "#a6e3a1",
+    DYN_WALL: "#d45555",
+}
+
+CELL_SIZE = 28  # pixels per grid cell
+GRID_ROWS = 20
+GRID_COLS = 20
+ANIM_DELAY = 30  # ms between animation frames
+AGENT_DELAY = 120  # ms between agent steps in dynamic mode
