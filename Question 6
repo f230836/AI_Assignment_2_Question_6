@@ -1,5 +1,5 @@
-# Step 2: Added Heuristics
-# - Implemented Manhattan and Euclidean distance functions.
+# Step 3: Priority Queue Implementation
+# - Cumulative code from previous steps plus a min-heap priority queue.
 
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -44,3 +44,23 @@ def manhattan(a, b):
 def euclidean(a, b):
     """Euclidean Distance  –  √(Δrow² + Δcol²)"""
     return math.sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2)
+
+# Priority Queue Implementation
+class PriorityQueue:
+    def __init__(self):
+        self._heap = []
+        self._counter = 0  # tie-breaker
+
+    def push(self, priority, item):
+        heapq.heappush(self._heap, (priority, self._counter, item))
+        self._counter += 1
+
+    def pop(self):
+        _, _, item = heapq.heappop(self._heap)
+        return item
+
+    def __len__(self):
+        return len(self._heap)
+
+    def empty(self):
+        return len(self._heap) == 0
