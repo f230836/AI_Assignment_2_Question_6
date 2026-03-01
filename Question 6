@@ -1,5 +1,5 @@
-# Step 4: Grid Class Implementation
-# - Cumulative code from previous steps plus the Grid class.
+# Step 5: Search Algorithms
+# - Cumulative code from previous steps and added A* and GBFS generators.
 
 import tkinter as tk
 from tkinter import ttk, messagebox
@@ -116,6 +116,75 @@ class Grid:
         self.cells[self.goal[0]][self.goal[1]] = EMPTY
         self.goal = (r, c)
         self.cells[r][c] = GOAL
-        self.cells[self.goal[0]][self.goal[1]] = EMPTY
-        self.goal = (r, c)
-        self.cells[r][c] = GOAL
+
+# Search Result and algorithms
+class SearchResult:
+    def __init__(self):
+        self.path          = []
+        self.visited_count = 0
+        self.path_cost     = 0
+        self.exec_ms       = 0.0
+        self.success       = False
+
+
+def search_step_generator(grid, algorithm, heuristic_fn, start_override=None):
+    """
+    Generator that runs A* or GBFS one expansion at a time.
+
+    Yields dicts:
+      {'type': 'expand', 'cell': (r,c), 'frontier': set, 'visited': set}
+    Final yield:
+      {'type': 'done', 'result': SearchResult}
+    """
+    start_pos = start_override if start_override else grid.start
+    goal_pos  = grid.goal
+
+    open_q  = PriorityQueue()
+    g_score = {start_pos: 0}
+    came_from = {}
+    closed  = set()
+    in_open = {start_pos}
+
+    h0 = heuristic_fn(start_pos, goal_pos)
+    f0 = (g_score[start_pos] + h0) if algorithm == "A*" else h0
+    open_q.push(f0, start_pos)
+
+    t_start = time.perf_counter()
+    result  = SearchResult()
+
+    while not open_q.empty():
+        current = open_q.pop()
+        in_open.discard(current)
+
+        if current in closed:
+            continue
+        closed.add(current)
+
+        if current == goal_pos:
+            path = [current]
+            node = current
+            while node in came_from:
+                node = came_from[node]
+                path.append(node)
+            path.reverse()
+            result.path = path
+            result.success = True
+            yield {'type': 'done', 'result': result}
+            return
+
+        for neighbour in grid.get_neighbors(current[0], current[1]):
+            if neighbour in closed:
+                continue
+            tentative_g = g_score[current] + 1
+            if tentative_g < g_score.get(neighbour, float('inf')):
+                came_from[neighbour] = current
+                g_score[neighbour]   = tentative_g
+                h = heuristic_fn(neighbour, goal_pos)
+                f = (tentative_g + h) if algorithm == "A*" else h
+                open_q.push(f, neighbour)
+                in_open.add(neighbour)
+
+        yield {'type': 'expand', 'result': result}
+
+    result.success = False
+    yield {'type': 'done', 'result': result}
